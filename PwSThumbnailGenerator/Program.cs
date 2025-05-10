@@ -19,18 +19,17 @@ internal static class Program
 
         var episodeOption = new Option<int>("--episode", "Episode number") { IsRequired = true };
         var titleOption = new Option<string>("--title", "Lesson title") { IsRequired = true };
-        var outputOption = new Option<string>("--output", () => "ProgrammingWithShadowEp.png", "Output PNG file name (Default: ProgrammingWithShadowEp#Title.png");
 
-        var rootCommand = new RootCommand { episodeOption, titleOption, outputOption };
+        var rootCommand = new RootCommand { episodeOption, titleOption };
 
-        rootCommand.Description = "Generate episode image with circle and text.";
+        rootCommand.Description = "Generate episode image with circle and text in the current directory.";
 
-        rootCommand.SetHandler(GenerateImage, episodeOption, titleOption, outputOption);
+        rootCommand.SetHandler(GenerateImage, episodeOption, titleOption);
 
         return rootCommand.Invoke(args);
     }
 
-    static void GenerateImage(int episodeNumber, string title, string outputFile)
+    static void GenerateImage(int episodeNumber, string title)
     {
         const int width = 512;
         const int height = 512;
@@ -67,8 +66,9 @@ internal static class Program
             g.DrawString(text, font, textBrush, circleRect, format);
         }
 
-        bmp.Save(outputFile, ImageFormat.Png);
-        Console.WriteLine($"✅ Image saved as '{outputFile}'");
+        var output = $"ProgrammingWithShadowEp{episodeNumber}{title}.png";
+        bmp.Save(output, ImageFormat.Png);
+        Console.WriteLine($"✅ Image saved as '{output}'");
     }
 
     static Font FindBestFitFont(Graphics g, string text, Font preferredFont, Size layoutSize)
